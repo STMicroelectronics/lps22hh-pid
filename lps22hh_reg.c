@@ -663,9 +663,9 @@ int32_t lps22hh_pressure_raw_get(stmdev_ctx_t *ctx, uint32_t *buff)
   uint8_t reg[3];
   ret =  lps22hh_read_reg(ctx, LPS22HH_PRESS_OUT_XL, reg, 3);
   *buff = reg[2];
-  *buff = (*buff * 256) + reg[1];
-  *buff = (*buff * 256) + reg[0];
-  *buff *= 256;
+  *buff = (*buff * 256U) + reg[1];
+  *buff = (*buff * 256U) + reg[0];
+  *buff *= 256U;
 
   return ret;
 }
@@ -681,11 +681,11 @@ int32_t lps22hh_pressure_raw_get(stmdev_ctx_t *ctx, uint32_t *buff)
 int32_t lps22hh_temperature_raw_get(stmdev_ctx_t *ctx, int16_t *buff)
 {
   int32_t ret;
-
   uint8_t reg[2];
+
   ret =  lps22hh_read_reg(ctx, LPS22HH_TEMP_OUT_L, reg, 2);
-  *buff = reg[1];
-  *buff = (*buff * 256) + reg[0];
+  *buff = (int16_t)reg[1];
+  *buff = (*buff * 256) + (int16_t)reg[0];
 
   return ret;
 }
@@ -706,9 +706,9 @@ int32_t lps22hh_fifo_pressure_raw_get(stmdev_ctx_t *ctx,
   uint8_t reg[3];
   ret =  lps22hh_read_reg(ctx, LPS22HH_FIFO_DATA_OUT_PRESS_XL, reg, 3);
   *buff = reg[2];
-  *buff = (*buff * 256) + reg[1];
-  *buff = (*buff * 256) + reg[0];
-  *buff *= 256;
+  *buff = (*buff * 256U) + reg[1];
+  *buff = (*buff * 256U) + reg[0];
+  *buff *= 256U;
 
   return ret;
 }
@@ -728,8 +728,8 @@ int32_t lps22hh_fifo_temperature_raw_get(stmdev_ctx_t *ctx,
 
   uint8_t reg[2];
   ret =  lps22hh_read_reg(ctx, LPS22HH_FIFO_DATA_OUT_TEMP_L, reg, 2);
-  *buff = reg[1];
-  *buff = (*buff * 256) + reg[0];
+  *buff = (int16_t)reg[1];
+  *buff = (*buff * 256) + (int16_t)reg[0];
 
   return ret;
 }
