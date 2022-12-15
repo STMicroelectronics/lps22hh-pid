@@ -1474,37 +1474,52 @@ int32_t lps22hh_pin_polarity_get(stmdev_ctx_t *ctx,
 }
 
 /**
-  * @brief  Select the signal that need to route on int pad.[set]
+  * @brief  Route interrupt signals on int1 pin.[set]
   *
-  * @param  ctx      read / write interface definitions
-  * @param  val      registers CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  * @param  ctx   communication interface handler.(ptr)
+  * @param  val   the signals to route on int1 pin.(ptr)
+  * @retval       interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lps22hh_pin_int_route_set(stmdev_ctx_t *ctx,
-                                  lps22hh_ctrl_reg3_t *val)
+                                  lps22hh_pin_int_route_t *val)
 {
+  lps22hh_ctrl_reg3_t ctrl_reg3;
   int32_t ret;
 
-  ret =  lps22hh_write_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *) val, 1);
+  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&ctrl_reg3, 1);
+  if (ret == 0)
+  {
+    ctrl_reg3.drdy = val->drdy_pres;
+    ctrl_reg3.int_f_wtm = val->fifo_th;
+    ctrl_reg3.int_f_ovr = val->fifo_ovr;
+    ctrl_reg3.int_f_full = val->fifo_full;
 
+    ret = lps22hh_write_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&ctrl_reg3, 1);
+  }
   return ret;
 }
 
 /**
-  * @brief  Select the signal that need to route on int pad.[get]
+  * @brief  Route interrupt signals on int1 pin.[get]
   *
-  * @param  ctx      read / write interface definitions
-  * @param  val      registers CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
+  * @param  ctx   communication interface handler.(ptr)
+  * @param  val   the signals that are routed on int1 pin.(ptr)
+  * @retval       interface status (MANDATORY: return 0 -> no Error)
   *
   */
 int32_t lps22hh_pin_int_route_get(stmdev_ctx_t *ctx,
-                                  lps22hh_ctrl_reg3_t *val)
+                                  lps22hh_pin_int_route_t *val)
 {
+  lps22hh_ctrl_reg3_t ctrl_reg3;
   int32_t ret;
 
-  ret =  lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *) val, 1);
+  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&ctrl_reg3, 1);
+
+  val->drdy_pres =  ctrl_reg3.drdy;
+  val->fifo_th = ctrl_reg3.int_f_wtm;
+  val->fifo_ovr = ctrl_reg3.int_f_ovr;
+  val->fifo_full = ctrl_reg3.int_f_full;
 
   return ret;
 }
@@ -1838,15 +1853,15 @@ int32_t lps22hh_fifo_watermark_get(stmdev_ctx_t *ctx, uint8_t *val)
   * @brief  FIFO stored data level.[get]
   *
   * @param  ctx      read / write interface definitions
-  * @param  buff     buffer that stores data read
+  * @param  num      buffer that stores data read
   * @retval          interface status (MANDATORY: return 0 -> no Error)
   *
   */
-int32_t lps22hh_fifo_data_level_get(stmdev_ctx_t *ctx, uint8_t *buff)
+int32_t lps22hh_fifo_data_level_get(stmdev_ctx_t *ctx, uint8_t *num)
 {
   int32_t ret;
 
-  ret =  lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, buff, 1);
+  ret =  lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, num, 1);
 
   return ret;
 }
@@ -1922,137 +1937,6 @@ int32_t lps22hh_fifo_wtm_flag_get(stmdev_ctx_t *ctx, uint8_t *val)
 
   ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS2, (uint8_t *)&reg, 1);
   *val = reg.fifo_wtm_ia;
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO overrun interrupt on INT_DRDY pin.[set]
-  *
-  * @param  stmdev_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t val: change the values of f_ovr in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_ovr_on_int_set(stmdev_ctx_t *ctx, uint8_t val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-
-  if (ret == 0)
-  {
-    reg.int_f_ovr = val;
-    ret = lps22hh_write_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  }
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO overrun interrupt on INT_DRDY pin.[get]
-  *
-  * @param  stmdev_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t: change the values of f_ovr in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_ovr_on_int_get(stmdev_ctx_t *ctx, uint8_t *val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  *val = reg.int_f_ovr;
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO watermark status on INT_DRDY pin.[set]
-  *
-  * @param  stmdev_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t val: change the values of f_fth in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_threshold_on_int_set(stmdev_ctx_t *ctx,
-                                          uint8_t val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-
-  if (ret == 0)
-  {
-    reg.int_f_wtm = val;
-    ret = lps22hh_write_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  }
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO watermark status on INT_DRDY pin.[get]
-  *
-  * @param  lps22hb_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t: change the values of f_fth in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_threshold_on_int_get(stmdev_ctx_t *ctx,
-                                          uint8_t *val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  *val = reg.int_f_wtm;
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO full flag on INT_DRDY pin.[set]
-  *
-  * @param  stmdev_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t val: change the values of f_fss5 in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_full_on_int_set(stmdev_ctx_t *ctx, uint8_t val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-
-  if (ret == 0)
-  {
-    reg.int_f_full = val;
-    ret = lps22hh_write_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  }
-
-  return ret;
-}
-
-/**
-  * @brief  FIFO full flag on INT_DRDY pin.[get]
-  *
-  * @param  stmdev_ctx_t *ctx: read / write interface definitions
-  * @param  uint8_t: change the values of f_fss5 in reg CTRL_REG3
-  * @retval          interface status (MANDATORY: return 0 -> no Error)
-  *
-  */
-int32_t lps22hh_fifo_full_on_int_get(stmdev_ctx_t *ctx, uint8_t *val)
-{
-  lps22hh_ctrl_reg3_t reg;
-  int32_t ret;
-
-  ret = lps22hh_read_reg(ctx, LPS22HH_CTRL_REG3, (uint8_t *)&reg, 1);
-  *val = reg.int_f_full;
 
   return ret;
 }

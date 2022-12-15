@@ -621,10 +621,17 @@ int32_t lps22hh_pin_polarity_set(stmdev_ctx_t *ctx,
 int32_t lps22hh_pin_polarity_get(stmdev_ctx_t *ctx,
                                  lps22hh_int_h_l_t *val);
 
+typedef struct
+{
+  uint8_t drdy_pres : 1; /* Pressure data ready */
+  uint8_t fifo_th   : 1; /* FIFO threshold reached */
+  uint8_t fifo_ovr  : 1; /* FIFO overrun */
+  uint8_t fifo_full : 1; /* FIFO full */
+} lps22hh_pin_int_route_t;
 int32_t lps22hh_pin_int_route_set(stmdev_ctx_t *ctx,
-                                  lps22hh_ctrl_reg3_t *val);
+                                  lps22hh_pin_int_route_t *val);
 int32_t lps22hh_pin_int_route_get(stmdev_ctx_t *ctx,
-                                  lps22hh_ctrl_reg3_t *val);
+                                  lps22hh_pin_int_route_t *val);
 
 typedef enum
 {
@@ -662,7 +669,7 @@ int32_t lps22hh_fifo_stop_on_wtm_get(stmdev_ctx_t *ctx, uint8_t *val);
 int32_t lps22hh_fifo_watermark_set(stmdev_ctx_t *ctx, uint8_t val);
 int32_t lps22hh_fifo_watermark_get(stmdev_ctx_t *ctx, uint8_t *val);
 
-int32_t lps22hh_fifo_data_level_get(stmdev_ctx_t *ctx, uint8_t *buff);
+int32_t lps22hh_fifo_data_level_get(stmdev_ctx_t *ctx, uint8_t *num);
 
 int32_t lps22hh_fifo_src_get(stmdev_ctx_t *ctx,
                              lps22hh_fifo_status2_t *val);
@@ -672,17 +679,6 @@ int32_t lps22hh_fifo_full_flag_get(stmdev_ctx_t *ctx, uint8_t *val);
 int32_t lps22hh_fifo_ovr_flag_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 int32_t lps22hh_fifo_wtm_flag_get(stmdev_ctx_t *ctx, uint8_t *val);
-
-int32_t lps22hh_fifo_ovr_on_int_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lps22hh_fifo_ovr_on_int_get(stmdev_ctx_t *ctx, uint8_t *val);
-
-int32_t lps22hh_fifo_threshold_on_int_set(stmdev_ctx_t *ctx,
-                                          uint8_t val);
-int32_t lps22hh_fifo_threshold_on_int_get(stmdev_ctx_t *ctx,
-                                          uint8_t *val);
-
-int32_t lps22hh_fifo_full_on_int_set(stmdev_ctx_t *ctx, uint8_t val);
-int32_t lps22hh_fifo_full_on_int_get(stmdev_ctx_t *ctx, uint8_t *val);
 
 /**
   * @}
