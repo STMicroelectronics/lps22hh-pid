@@ -30,15 +30,33 @@ This directory contains the LPS22HH component drivers.
 # Update history
 
 ::: {.collapse}
-<input type="checkbox" id="collapse-section1" checked aria-hidden="true">
+<input type="checkbox" id="collapse-section1" aria-hidden="true">
 <label for="collapse-section1" aria-hidden="true">V1.0.0 / 18-June-2021</label>
-<div>			
+<div>
 
 ## Main changes
 
 ### First release
 
 - First official release [ref. DS v2.0]
+
+##
+
+</div>
+
+<input type="checkbox" id="collapse-section2" checked aria-hidden="true">
+<label for="collapse-section2" aria-hidden="true">V1.1.0 / 01-June-2023</label>
+<div>
+
+## Main changes
+
+- lps22hh: modify FIFO APIs
+- lps22hh_reg.c: fix MISRA compliance errors
+- lps22hh driver: Fixed most mcuastyle errors
+- lps22hh_reg.h: Fixed compilation warning with MDK-ARM
+- lps22hh_reg.h: Extend stmdev_ctx_t structure with mdelay callback
+- repo name changed adding '-pid' extension.
+- lps22hh driver: Added __weak directive to I/O routines
 
 ##
 
