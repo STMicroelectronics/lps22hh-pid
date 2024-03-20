@@ -309,15 +309,13 @@ typedef struct
 typedef struct
 {
 #if DRV_BYTE_ORDER == DRV_LITTLE_ENDIAN
-uint8_t f_mode                          :
-  3;  /* f_mode + trig_modes */
+  uint8_t f_mode                          : 3;  /* f_mode + trig_modes */
   uint8_t stop_on_wtm                     : 1;
   uint8_t not_used_01                     : 4;
 #elif DRV_BYTE_ORDER == DRV_BIG_ENDIAN
   uint8_t not_used_01                     : 4;
   uint8_t stop_on_wtm                     : 1;
-uint8_t f_mode                          :
-  3;  /* f_mode + trig_modes */
+  uint8_t f_mode                          : 3;  /* f_mode + trig_modes */
 #endif /* DRV_BYTE_ORDER */
 } lps22hh_fifo_ctrl_t;
 
@@ -449,11 +447,11 @@ typedef union
  * them with a custom implementation.
  */
 int32_t lps22hh_read_reg(const stmdev_ctx_t *ctx, uint8_t reg,
-                                uint8_t *data,
-                                uint16_t len);
+                         uint8_t *data,
+                         uint16_t len);
 int32_t lps22hh_write_reg(const stmdev_ctx_t *ctx, uint8_t reg,
-                                 uint8_t *data,
-                                 uint16_t len);
+                          uint8_t *data,
+                          uint16_t len);
 
 float_t lps22hh_from_lsb_to_hpa(uint32_t lsb);
 
