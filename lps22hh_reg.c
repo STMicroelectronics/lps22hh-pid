@@ -575,8 +575,8 @@ int32_t lps22hh_all_sources_get(const stmdev_ctx_t *ctx,
   if (ret == 0)
   {
     uint8_t buff[2];
-    ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, buff, 2);
-    val->fifo_status2 = buff[1];
+    ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, (uint8_t *) &buff, 2);
+	*((uint8_t *)&val->fifo_status2) = buff[1];
   }
 
   if (ret == 0)
@@ -1870,8 +1870,8 @@ int32_t lps22hh_fifo_watermark_get(const stmdev_ctx_t *ctx, uint8_t *val)
 int32_t lps22hh_fifo_data_level_get(const stmdev_ctx_t *ctx, uint8_t *num)
 {
   int32_t ret;
-  int8_t buff[2];
-  ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, buff, 2);
+  uint8_t buff[2];
+  ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, (uint8_t *) &buff, 2);
   *num = buff[0];
 
   return ret;
@@ -1890,9 +1890,9 @@ int32_t lps22hh_fifo_src_get(const stmdev_ctx_t *ctx,
 {
   int32_t ret;
 
-  int8_t buff[2];
-  ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, buff, 2);
-  *val = buff[1];
+  uint8_t buff[2];
+  ret = lps22hh_read_reg(ctx, LPS22HH_FIFO_STATUS1, (uint8_t *) &buff, 2);
+  *((uint8_t *)&val) = buff[1];
 
   return ret;
 }
